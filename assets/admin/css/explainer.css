@@ -382,7 +382,7 @@ textarea#plugin_plan_container {
     margin-top: 10px;
 }
 
-textarea#plugin_question:placeholder-shown + .explain-options {
+.autoplugin-prompt-wrapper:has(#plugin_question:placeholder-shown) + .explain-options {
     display: block;
 }
 

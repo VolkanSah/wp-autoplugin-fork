@@ -24,6 +24,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class OpenAI_Responses_API extends OpenAI_API {
 
 	/**
+	 * Max tokens parameter. Update default for Responses API.
+	 *
+	 * @var int
+	 */
+	protected $max_tokens = 128000;
+
+	/**
 	 * API URL.
 	 *
 	 * @var string

@@ -33,6 +33,9 @@ class AI_Utils {
 			'gpt-5-nano',
 			'gpt-5-chat-latest',
 			'gpt-5-codex',
+			'gpt-5.1-codex',
+			'gpt-5.1-codex-max',
+			'gpt-5.1-codex-mini',
 		];
 	}
 

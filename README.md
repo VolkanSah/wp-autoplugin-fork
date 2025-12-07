@@ -105,14 +105,15 @@ When you activate an AI-generated plugin, WP-Autoplugin will automatically detec
 
 WP-Autoplugin supports 30+ AI models, including:
 
-- Claude 4.1 Opus
-- Claude 4 Sonnet
-- Claude 3.7 Sonnet
-- Claude 3.5 Sonnet
-- Claude 3.5 Haiku
+- Claude 4.5 Opus
+- Claude 4.5 Sonnet
+- Claude 4.5 Haiku
 - o3
 - o4-mini
-- GPT-5
+- GPT-5.1
+- GPT-5.1-Codex
+- GPT-5.1-Codex-Max
+- GPT-5.1-Codex-Mini
 - GPT-5-mini
 - GPT-5-nano
 - GPT-4.1
@@ -120,6 +121,7 @@ WP-Autoplugin supports 30+ AI models, including:
 - GPT-4.1-nano
 - GPT-4o
 - GPT-4o mini
+- Google Gemini 3 Pro
 - Google Gemini 2.5 Pro
 - Google Gemini 2.5 Flash
 - Google Gemini 2.5 Flash Lite
@@ -206,6 +208,9 @@ WP-Autoplugin is fully translatable. If you would like to contribute a translati
 WP-Autoplugin is licensed under the GPLv3 or later.
 
 ## Changelog
+
+### 1.7.1
+- Added support for new models across all providers
 
 ### 1.7
 - Added image input support for OpenAI, Anthropic and Google models
