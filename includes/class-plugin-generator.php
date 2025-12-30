@@ -1,13 +1,14 @@
 <?php
 /**
  * Autoplugin Generator class.
- *
+ * Security Fixes
  * @package WP-Autoplugin
- * @since 1.0.0
- * @version 1.0.5
+ * @since 1.7.1
+ * @version 1.7.2
  * @link https://wp-autoplugin.com
- * @license GPL-2.0+
+ * @license GPL-3.0+
  * @license https://www.gnu.org/licenses/gpl-2.0.html
+ * Volkan Sah@github
  */
 
 namespace WP_Autoplugin;
@@ -67,13 +68,13 @@ class Plugin_Generator {
             The plugin must be contained within a single file, including all necessary code. Do not write the actual plugin code. Your response should be a valid JSON object, with clear and concise text in each of the following sections:
 
             - plugin_name: Provide a concise name for the plugin.
-            - design_and_architecture: Outline the overall design and architecture, prioritizing security layers (Data Validation -> Processing -> Escaping).
-            - detailed_feature_description: Detailed description of features and their secure implementation.
-            - user_interface: Describe the UI elements and interaction.
-            - security_considerations: MANDATORY: Define specific WordPress security functions to be used (e.g., check_admin_referer, sanitize_text_field, wp_kses, esc_html).
-            - testing_plan: Outline a plan for testing. Explain how the plugin works for non-technical users.
+            - design_and_architecture: Outline the overall design and architecture of the plugin, including data flow and major components.
+            - detailed_feature_description: Provide a detailed description of each feature, explaining how it should be implemented.
+            - user_interface: Describe the user interface elements and how users will interact with the plugin.
+            - security_considerations: MANDATORY: Detail the exact security implementation using WordPress Nonces, Capability Checks (current_user_can), and strict Sanitize/Escape protocols.
+            - testing_plan: Outline a plan for testing the plugin to ensure it functions correctly. There will be no test suite for the plugin, you just have to explain how the plugin works, so it can be tested correctly. The user may not be technical, so the plan should be clear and easy to follow. Do not tell the user how to install the plugin, just explain how it works.
 
-            Do not add any additional commentary. Make sure your response only contains a valid JSON object. Do not use Markdown formatting.
+            Do not add any additional commentary. Make sure your response only contains a valid JSON object with the specified sections. Do not use Markdown formatting in your answer.
             PROMPT;
 
         $params  = [ 'response_format' => [ 'type' => 'json_object' ] ];
@@ -96,23 +97,33 @@ class Plugin_Generator {
             $input
             ```
             
-            This will be a complex multi-file plugin. Do not write the actual plugin code. Your response should be a valid JSON object, with clear and concise text in each of the following sections:
+            This will be a complex multi-file plugin with proper directory structure. Do not write the actual plugin code. Your response should be a valid JSON object, with clear and concise text in each of the following sections:
             
             - plugin_name: Provide a concise name for the plugin.
-            - design_and_architecture: Outline architecture including data flow and major components.
-            - detailed_feature_description: Description of each feature and its technical implementation.
-            - user_interface: Describe UI elements.
-            - user_flows: Sequence of actions for key tasks.
-            - security_considerations: MANDATORY: Outline a robust security concept including Nonces, Capability Checks (current_user_can), and strict Output Escaping (XSS prevention).
-            - testing_plan: Clearly explain how the plugin functions.
-            - project_structure: Define file and directory structure (PHP, CSS, JS only).
+            - design_and_architecture: Outline the overall design and architecture of the plugin, including data flow and major components. Keep it simple and avoid unnecessary complexity.
+            - detailed_feature_description: Provide a detailed description of each feature, explaining how it should be implemented with minimal code.
+            - user_interface: Describe the user interface elements and how users will interact with the plugin. Focus on essential UI elements only.
+            - user_flows: Describe the main steps users will follow to accomplish key tasks with the plugin. Outline each flow as a sequence of actions, focusing on typical scenarios and making them easy to understand for non-technical users.
+            - security_considerations: MANDATORY: Define a complete security architecture. Specify hooks for check_admin_referer, input sanitization functions (sanitize_text_field, etc.), and output escaping (esc_html, wp_kses).
+            - testing_plan: Outline a plan for testing the plugin to ensure it functions correctly. There will be no test suite for the plugin, you just have to explain how the plugin works, so it can be tested correctly. The user may not be technical, so the plan should be clear and easy to follow. Do not tell the user how to install the plugin, just explain how it works.
+            - project_structure: Define the file and directory structure for this plugin. This should include:
+                - directories: Array of directory paths needed for the plugin (e.g., "includes/", "assets/css/", "assets/js/", "admin/")
+                - files: Array of file objects, each containing:
+                    - path: The file path relative to plugin root
+                    - type: File type (php, css, or js only)
+                    - description: Brief description of the file's purpose
+                
+                Only include PHP, CSS, and JS files. No other file types. Ensure proper WordPress plugin structure with a main plugin file, and organize code logically into separate files. Keep the file structure minimal and only create files that are absolutely necessary.
             
             IMPORTANT GUIDELINES:
-            - Ensure all data handling follows the principle of "Sanitize on Input, Escape on Output".
-            - Avoid over-engineering but never sacrifice security.
-            - The plugin must be self-contained.
+            - Avoid over-engineering: Write the minimum amount of code necessary to accomplish the user's specifications.
+            - SECURITY IS PARAMOUNT: Every data entry point must be sanitized, every action verified via Nonce, and every output escaped.
+            - The plugin must be self-contained and cannot use external libraries or require build steps.
+            - Only use external dependencies if explicitly specified in the user's requirements.
+            - Keep the implementation simple and straightforward.
+            - Focus on core functionality rather than adding unnecessary features.
             
-            Do not add any additional commentary. Make sure your response only contains a valid JSON object. Do not use Markdown formatting.
+            Do not add any additional commentary. Make sure your response only contains a valid JSON object with the specified sections. Do not use Markdown formatting in your answer.
             PROMPT;
 
         $params  = [ 'response_format' => [ 'type' => 'json_object' ] ];
@@ -135,20 +146,19 @@ class Plugin_Generator {
         }
 
         $prompt = <<<PROMPT
-            Build a single-file WordPress plugin based on the specification below.
-            
+            Build a single-file WordPress plugin based on the specification below. Do not use Markdown formatting in your answer. Ensure the response does not contain any explanation or commentary, ONLY the complete, working code without any placeholders. "Add X here" comments are not allowed in the code, you need to write out the full, working code.
+
             ```
             $plan
             ```
 
-            STRICT SECURITY REQUIREMENTS:
-            - Use wp_verify_nonce() for all form/AJAX submissions.
-            - Use current_user_can() for all restricted actions.
-            - Sanitize ALL inputs using appropriate WordPress functions (sanitize_text_field, etc.).
-            - Escape ALL outputs in HTML using esc_html(), esc_attr(), or wp_kses().
-            - NEVER use \$_POST or \$_GET directly without sanitization.
-            
-            Do not use Markdown formatting. Ensure the response contains ONLY the complete, working code. Always use "WP-Autoplugin" for the Author, with Author URI: https://wp-autoplugin.com. Do not add the final closing "?>" tag.
+            SECURITY PROTOCOL:
+            - Implement wp_verify_nonce() or check_admin_referer() for ALL data processing.
+            - Wrap restricted logic in if(current_user_can(...)).
+            - Sanitize all \$_POST/\$_GET data before use.
+            - Escape all outputs using esc_html, esc_attr, or wp_kses.
+
+            Important: all code should be self-contained within one PHP file and follow WordPress coding standards. Use inline Javascript and CSS, inside the main PHP file. Additional CSS or JS files cannot be included. Use appropriate WP hooks, actions, and filters as necessary. Always use "WP-Autoplugin" for the Author of the plugin, with Author URI: https://wp-autoplugin.com. Do not add the final closing "?>" tag in the PHP file.
             PROMPT;
 
         return $this->ai_api->send_prompt( $prompt );
@@ -182,29 +192,36 @@ class Plugin_Generator {
         $is_main_file = basename( $file_path ) === basename( $file_path, '.php' ) . '.php' && ! strpos( $file_path, '/' );
 
         $prompt = <<<PROMPT
-            Generate a PHP file for a WordPress plugin:
+            Generate a PHP file for a WordPress plugin with the following specifications:
+
             File Path: $file_path
             File Purpose: $file_description
             
-            Plan: $plan
+            Plugin Plan:
+            ```
+            $plan
+            ```
+
             $context
 
-            Strict Requirements:
-            - Follow WP coding standards (Tabs for indentation).
-            - SECURITY: You MUST use Nonces, Capability Checks, and Sanitization/Escaping.
-            - Database: Use \$wpdb->prepare() for all queries to prevent SQL injection.
-            - Use "WP-Autoplugin" as author.
-            - No closing "?>" tag.
-            - Complete, functional code only.
+            Requirements:
+            - Follow WordPress coding standards and use tabs for indentation.
+            - Use appropriate PHP namespaces and class structures.
+            - CRITICAL: Include proper WordPress security measures (Nonces for forms/AJAX, current_user_can() for permissions, strict sanitization/escaping).
+            - DATABASE: Use \$wpdb->prepare() for all database interactions.
+            - Use "WP-Autoplugin" as the plugin author with Author URI: https://wp-autoplugin.com
+            - Do not add the final closing "?>" tag in PHP files.
+            - Ensure the code is complete and functional – do not add placeholders.
+            - Ensure the code complements the overall plugin plan and works seamlessly with other files.
             PROMPT;
 
         if ( $is_main_file ) {
-            $prompt .= "- Include the full WordPress plugin header\n";
+            $prompt .= "- This is the main plugin file, so include the WordPress plugin header\n";
         } else {
-            $prompt .= "- Do not include the plugin header\n";
+            $prompt .= "- This is a supporting file, do not include the WordPress plugin header\n";
         }
 
-        $prompt .= "\nReturn ONLY the PHP code without markdown.";
+        $prompt .= "\nReturn ONLY the PHP code ($file_path) without any explanation or markdown formatting.";
 
         return $this->ai_api->send_prompt( $prompt );
     }
@@ -214,15 +231,26 @@ class Plugin_Generator {
      */
     private function generate_css_file( $file_path, $file_description, $plan, $context ) {
         $prompt = <<<PROMPT
-            Generate a CSS file for: $file_path
-            Purpose: $file_description
-            Plan: $plan
+            Generate a CSS file for a WordPress plugin with the following specifications:
+
+            File Path: $file_path
+            File Purpose: $file_description
+            
+            Plugin Plan:
+            ```
+            $plan
+            ```
+
             $context
 
             Requirements:
-            - Unique CSS selectors to avoid conflicts.
-            - Responsive design.
-            Return ONLY CSS code without markdown.
+            - Follow WordPress CSS guidelines.
+            - Use unique CSS selectors (prefixed) that won't conflict with themes or other plugins.
+            - Include responsive design considerations.
+            - Use meaningful class names and comments.
+            - Ensure cross-browser compatibility.
+            
+            Return ONLY the CSS code without any explanation or markdown formatting.
             PROMPT;
 
         return $this->ai_api->send_prompt( $prompt );
@@ -233,25 +261,35 @@ class Plugin_Generator {
      */
     private function generate_js_file( $file_path, $file_description, $plan, $context ) {
         $prompt = <<<PROMPT
-            Generate a SECURE JavaScript file for: $file_path
-            Purpose: $file_description
-            Plan: $plan
+            Generate a JavaScript file for a WordPress plugin with the following specifications:
+
+            File Path: $file_path
+            File Purpose: $file_description
+            
+            Plugin Plan:
+            ```
+            $plan
+            ```
+
             $context
 
-            Security Requirements:
-            - NEVER use innerHTML for user-generated content; use textContent or jQuery .text().
-            - Include proper error handling for AJAX calls.
-            - Use wp-localize-script data for AJAX URLs and Nonces.
-            - Ensure compatibility with WordPress standards.
+            Requirements:
+            - Follow WordPress JavaScript guidelines.
+            - Use jQuery if needed (it's available in WordPress).
+            - SECURITY: Avoid innerHTML for user-supplied data (use textContent or .text()).
+            - Include proper error handling for all AJAX/API calls.
+            - Use meaningful function names and comments.
+            - Ensure compatibility with WordPress admin and frontend.
+            - Use WordPress localization (wp-localize-script) if needed for AJAX URLs and Nonces.
             
-            Return ONLY the JavaScript code without markdown.
+            Return ONLY the JavaScript code without any explanation or markdown formatting.
             PROMPT;
 
         return $this->ai_api->send_prompt( $prompt );
     }
 
     /**
-     * Build context string from generated files.
+     * Build context string from generated files and project structure.
      */
     private function build_file_context( $generated_files, $project_structure ) {
         $context = "Project Structure:\n";
@@ -279,7 +317,7 @@ class Plugin_Generator {
                 if ( $lines_count > $lines_limit ) {
                     $context .= "Content (truncated):\n```\n";
                     $context .= join( "\n", array_slice( explode( "\n", $file_content ), 0, $lines_limit ) );
-                    $context .= "\n```\n";
+                    $context .= "\n```\nContent truncated to first $lines_limit lines.\n";
                 } else {
                     $context .= "Content:\n```\n$file_content\n```\n";
                 }
@@ -290,37 +328,42 @@ class Plugin_Generator {
     }
 
     /**
-     * Review the codebase for CRITICAL errors.
+     * Review the complete generated codebase and suggest improvements.
      */
     public function review_generated_code( $plugin_plan, $project_structure, $generated_files ) {
         $context = $this->build_file_context( $generated_files, $project_structure );
 
         $prompt = <<<PROMPT
-            Review this WordPress plugin codebase for CRITICAL errors and SECURITY VULNERABILITIES (XSS, SQLi, CSRF).
-            
-            Plan: $plugin_plan
+            You are reviewing a complete WordPress plugin codebase for critical errors and SECURITY VULNERABILITIES (XSS, SQL Injection, CSRF).
+
+            Plugin Plan:
+            ```
+            $plugin_plan
+            ```
+
             $context
 
-            Analyze for:
-            - Syntax errors.
-            - Missing Nonce/Capability checks.
-            - Unsafe JS (innerHTML usage).
-            - Unsanitized input or unescaped output.
+            Analyze for critical issues ONLY:
+            - Syntax errors in PHP, CSS, or JavaScript.
+            - MISSING SECURITY: No Nonce verification, no current_user_can() checks, or unescaped outputs.
+            - Incorrect file references or broken dependencies.
+            - Database interactions without \$wpdb->prepare().
             
             Your response should be a valid JSON object:
             {
-                "review_summary": "Summary of issues",
+                "review_summary": "Summary of critical issues",
                 "suggestions": [
                     {
                         "action": "UPDATE",
-                        "file_path": "file.php",
-                        "file_type": "php",
-                        "reason": "Security/Critical issue",
-                        "description": "Fix instructions"
+                        "file_path": "path/to/file.php",
+                        "file_type": "php|css|js",
+                        "reason": "Security or functional break",
+                        "description": "Exact fix code"
                     }
                 ]
             }
-            Return ONLY JSON without markdown.
+            
+            Return ONLY the JSON response. No Markdown.
             PROMPT;
 
         return $this->ai_api->send_prompt( $prompt, '', [ 'response_format' => [ 'type' => 'json_object' ] ] );
