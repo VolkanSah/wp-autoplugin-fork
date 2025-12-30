@@ -41,7 +41,6 @@ class Plugin_Generator {
      * Prompt the AI to generate a plan for a WordPress plugin.
      *
      * @param string $input The plugin features.
-     *
      * @return string|WP_Error
      */
     public function generate_plugin_plan( $input, $prompt_images = [] ) {
@@ -56,10 +55,6 @@ class Plugin_Generator {
 
     /**
      * Generate a plan for a simple single-file plugin.
-     *
-     * @param string $input The plugin features.
-     *
-     * @return string|WP_Error
      */
     private function generate_simple_plugin_plan( $input, $prompt_images = [] ) {
         $prompt = <<<PROMPT
@@ -75,7 +70,7 @@ class Plugin_Generator {
             - design_and_architecture: Outline the overall design and architecture, prioritizing security layers (Data Validation -> Processing -> Escaping).
             - detailed_feature_description: Detailed description of features and their secure implementation.
             - user_interface: Describe the UI elements and interaction.
-            - security_considerations: MANDATORY: Define specific WordPress security functions to be used (e.g., check_admin_referer, sanitize_text_field, wp_kses).
+            - security_considerations: MANDATORY: Define specific WordPress security functions to be used (e.g., check_admin_referer, sanitize_text_field, wp_kses, esc_html).
             - testing_plan: Outline a plan for testing. Explain how the plugin works for non-technical users.
 
             Do not add any additional commentary. Make sure your response only contains a valid JSON object. Do not use Markdown formatting.
@@ -92,10 +87,6 @@ class Plugin_Generator {
 
     /**
      * Generate a plan for a complex multi-file plugin.
-     *
-     * @param string $input The plugin features.
-     *
-     * @return string|WP_Error
      */
     private function generate_complex_plugin_plan( $input, $prompt_images = [] ) {
         $prompt = <<<PROMPT
@@ -135,10 +126,6 @@ class Plugin_Generator {
 
     /**
      * Prompt the AI to generate a WordPress plugin code based on a plan.
-     *
-     * @param string $plan The plugin plan.
-     *
-     * @return string|WP_Error
      */
     public function generate_plugin_code( $plan ) {
         $plugin_mode = get_option( 'wp_autoplugin_plugin_mode', 'simple' );
@@ -264,7 +251,7 @@ class Plugin_Generator {
     }
 
     /**
-     * Build context string.
+     * Build context string from generated files.
      */
     private function build_file_context( $generated_files, $project_structure ) {
         $context = "Project Structure:\n";
@@ -303,7 +290,7 @@ class Plugin_Generator {
     }
 
     /**
-     * Review the complete generated codebase and suggest improvements.
+     * Review the codebase for CRITICAL errors.
      */
     public function review_generated_code( $plugin_plan, $project_structure, $generated_files ) {
         $context = $this->build_file_context( $generated_files, $project_structure );
@@ -320,21 +307,20 @@ class Plugin_Generator {
             - Unsafe JS (innerHTML usage).
             - Unsanitized input or unescaped output.
             
-            Return a JSON object:
+            Your response should be a valid JSON object:
             {
-                "review_summary": "Summary",
+                "review_summary": "Summary of issues",
                 "suggestions": [
                     {
                         "action": "UPDATE",
-                        "file_path": "path",
-                        "file_type": "type",
-                        "reason": "Security/Functionality issue",
-                        "description": "The exact code fix"
+                        "file_path": "file.php",
+                        "file_type": "php",
+                        "reason": "Security/Critical issue",
+                        "description": "Fix instructions"
                     }
                 ]
             }
-            
-            Return ONLY JSON. No markdown.
+            Return ONLY JSON without markdown.
             PROMPT;
 
         return $this->ai_api->send_prompt( $prompt, '', [ 'response_format' => [ 'type' => 'json_object' ] ] );
